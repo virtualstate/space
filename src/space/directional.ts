@@ -1,5 +1,5 @@
-import {isSamePoint, Point} from "./point";
-import {Dir} from "fs";
+import { isSamePoint, Point } from "./point";
+import { Dir } from "fs";
 
 export interface Directional {
   point: Point;
@@ -12,8 +12,8 @@ export function isSameDirectional(a: Directional, b: Directional) {
     return false;
   }
   return (
-      isSamePoint(a.point, b.point) &&
-      isSamePoint(a.direction, b.direction) &&
-      isSamePoint(a.acceleration, b.acceleration)
-  )
+    isSamePoint(a.point, b.point) &&
+    isSamePoint(a.direction, b.direction) &&
+    isSamePoint(a.acceleration, b.acceleration)
+  );
 }

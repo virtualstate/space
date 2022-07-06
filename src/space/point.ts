@@ -100,15 +100,18 @@ export function isPointZero(point: Point) {
 export function addPoints(point: Point, ...points: Point[]) {
   const filtered = points.filter(Boolean);
   const dimensions = filtered.reduce(
-      (dimensions, point) => Math.max(dimensions, point.dimensions.length),
-      0
+    (dimensions, point) => Math.max(dimensions, point.dimensions.length),
+    0
   );
   // ok(dimensions);
   if (!point) {
-    return addPoints({
-      type: "Point",
-      dimensions: Array.from({ length: dimensions }, () => 0),
-    }, ...points);
+    return addPoints(
+      {
+        type: "Point",
+        dimensions: Array.from({ length: dimensions }, () => 0),
+      },
+      ...points
+    );
   }
   return filtered.reduce((sum, next) => {
     ok(
@@ -119,8 +122,8 @@ export function addPoints(point: Point, ...points: Point[]) {
     return {
       ...sum,
       dimensions: [
-          ...sum.dimensions,
-          ...Array.from({ length: dimensions - sum.dimensions.length }, () => 0)
+        ...sum.dimensions,
+        ...Array.from({ length: dimensions - sum.dimensions.length }, () => 0),
       ].map((a, index) => a + next.dimensions[index]),
     };
   }, point);

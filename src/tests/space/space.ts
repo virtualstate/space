@@ -13,24 +13,24 @@ const blender = space({
 });
 
 blender.source(
-    {
-      async *[Symbol.asyncIterator]() {
-        yield 2;
-        yield 3;
-        yield 4;
-        yield 5;
-      },
+  {
+    async *[Symbol.asyncIterator]() {
+      yield 2;
+      yield 3;
+      yield 4;
+      yield 5;
     },
-    {
-      point: {
-        type: "Point",
-        dimensions: [100, 100, 100],
-      },
-      direction: {
-        type: "Point",
-        dimensions: [-25, -25, -25],
-      },
-    }
+  },
+  {
+    point: {
+      type: "Point",
+      dimensions: [100, 100, 100],
+    },
+    direction: {
+      type: "Point",
+      dimensions: [-25, -25, -25],
+    },
+  }
 );
 blender.source(
   {

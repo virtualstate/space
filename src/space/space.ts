@@ -8,15 +8,16 @@ import {
 import {
   blend,
   Blended,
-  BlendedIndex, Blender,
+  BlendedIndex,
+  Blender,
   BlenderConnect,
   BlenderTarget,
   BlendOptions,
 } from "@virtualstate/promise";
-import {Directional, isSameDirectional} from "./directional";
+import { Directional, isSameDirectional } from "./directional";
 import { Box } from "./box";
 import { match } from "./match";
-import {index} from "cheerio/lib/api/traversing";
+import { index } from "cheerio/lib/api/traversing";
 
 export interface SpaceConnectOptions extends Omit<BlendOptions, "blended"> {}
 
@@ -29,7 +30,8 @@ export interface BlendedSpace extends BlendedSpaceIndex {
   promise: Promise<void>;
 }
 
-export interface Space<T = unknown> extends Blender<T, BlendedSpaceIndex, BlendedSpace> {
+export interface Space<T = unknown>
+  extends Blender<T, BlendedSpaceIndex, BlendedSpace> {
   blend(): BlendedSpaceIndex[];
   source(source: AsyncIterable<T>, at: Directional): Directional;
   target(target: BlenderTarget<T>, at: Directional): Directional;
@@ -51,7 +53,7 @@ export function space<T = unknown>(options: SpaceOptions): Space<T> {
   const blender = blend<T>();
 
   const targets: Directional[] = [],
-      sources: Directional[] = [];
+    sources: Directional[] = [];
 
   function matchingBlend() {
     const blended: BlendedIndex[] = [];
@@ -70,10 +72,7 @@ export function space<T = unknown>(options: SpaceOptions): Space<T> {
     }
     // console.log(JSON.stringify(info, undefined, "  "));
 
-    const matched = match(box, [
-        ...sources,
-        ...targets
-    ]);
+    const matched = match(box, [...sources, ...targets]);
 
     // console.log({ matched, box });
     ok(matched.size);
@@ -81,8 +80,8 @@ export function space<T = unknown>(options: SpaceOptions): Space<T> {
     for (const [value, matches] of matched) {
       if (!matches.length) continue;
       const indexes = matches
-          .map((match) => targets.indexOf(match))
-          .filter(value => value > -1);
+        .map((match) => targets.indexOf(match))
+        .filter((value) => value > -1);
       const source = sources.indexOf(value);
       for (const index of indexes) {
         const remainingIndex = remaining.indexOf(index);
@@ -98,21 +97,17 @@ export function space<T = unknown>(options: SpaceOptions): Space<T> {
   }
 
   function getIndex(indexed: Directional[], at: Directional) {
-    const expected = indexed.findIndex((index) =>
-      isSameDirectional(at, index)
-    );
+    const expected = indexed.findIndex((index) => isSameDirectional(at, index));
     if (expected > -1) return expected;
     const index = indexed.length;
     indexed.push(at);
     return index;
   }
   function blendInner(blended = matchingBlend()) {
-    return blended.map(
-        ({ source, target }) => ({
-          source: sources[source],
-          target: targets[target]
-        })
-    )
+    return blended.map(({ source, target }) => ({
+      source: sources[source],
+      target: targets[target],
+    }));
   }
 
   return {
@@ -138,8 +133,8 @@ export function space<T = unknown>(options: SpaceOptions): Space<T> {
       });
       return output.map((output, index) => ({
         ...output,
-        promise: promises[index].promise
-      }))
+        promise: promises[index].promise,
+      }));
     },
   };
 }
