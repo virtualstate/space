@@ -1,6 +1,8 @@
 # `@virtualstate/space`
 
-This project is in semver alpha stage
+> Hey! This repository is experimental 
+> 
+> It may not have any real world value
 
 [//]: # (badges)
 
@@ -13,20 +15,3 @@ This project is in semver alpha stage
  ![87.45%25 lines covered](https://img.shields.io/badge/lines-87.45%25-brightgreen) ![87.45%25 statements covered](https://img.shields.io/badge/statements-87.45%25-brightgreen) ![78.95%25 functions covered](https://img.shields.io/badge/functions-78.95%25-yellow) ![86.75%25 branches covered](https://img.shields.io/badge/branches-86.75%25-brightgreen)
 
 [//]: # (badges)
-
-[//]: # (src/trying-to-write-documentation/combinational-how.tsx)
-
-import { ok, h, descendants } from "@virtualstate/focus";
-
-/**
- * This is living documentation, change this code, and on build, README.md will be updated
- *
- * Comments starting with /* (and not /**) will be treated as markdown
- * Code is treated as codeblocks
- *
- * To split code up, add an empty comment
- * A comment must have its starting & ending markers on their own lines
-
-# Hello
-
-[//]: # (src/trying-to-write-documentation/combinational-how.tsx)

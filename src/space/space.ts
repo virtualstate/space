@@ -8,21 +8,32 @@ import {
 import {
   blend,
   Blended,
-  BlendedIndex,
+  BlendedIndex, Blender,
   BlenderConnect,
   BlenderTarget,
   BlendOptions,
 } from "@virtualstate/promise";
-import { Directional } from "./directional";
+import {Directional, isSameDirectional} from "./directional";
 import { Box } from "./box";
 import { match } from "./match";
+import {index} from "cheerio/lib/api/traversing";
 
 export interface SpaceConnectOptions extends Omit<BlendOptions, "blended"> {}
 
-export interface Space<T = unknown> extends BlenderConnect {
+export interface BlendedSpaceIndex {
+  source: Directional;
+  target: Directional;
+}
+
+export interface BlendedSpace extends BlendedSpaceIndex {
+  promise: Promise<void>;
+}
+
+export interface Space<T = unknown> extends Blender<T, BlendedSpaceIndex, BlendedSpace> {
+  blend(): BlendedSpaceIndex[];
   source(source: AsyncIterable<T>, at: Directional): Directional;
   target(target: BlenderTarget<T>, at: Directional): Directional;
-  connect(options?: SpaceConnectOptions): Blended[];
+  connect(options?: SpaceConnectOptions): BlendedSpace[];
 }
 
 export interface SpaceOptions {
@@ -39,40 +50,40 @@ export function space<T = unknown>(options: SpaceOptions): Space<T> {
 
   const blender = blend<T>();
 
-  const indexed: Directional[] = [];
+  const targets: Directional[] = [],
+      sources: Directional[] = [];
+
   function matchingBlend() {
     const blended: BlendedIndex[] = [];
-    const info = [...indexed];
-
-    const movementSums = info.map(({ acceleration, direction }) =>
+    ok(sources.length);
+    const sourceIndexes = [...sources.keys()];
+    const movementSums = sources.map(({ acceleration, direction }) =>
       pointDimensionsSum(addPoints(acceleration, direction))
     );
-
-    const sums = new Map(
-      Array.from(info.entries()).map(
-        ([index, value]) => [value, movementSums[index]] as const
-      )
-    );
-
+    const sums = sources.map((_, index) => movementSums[index]);
     const allZero = [...sums.values()].every((value) => !value);
 
     if (!allZero) {
-      info.sort((a, b) => {
-        return sums.get(a) > sums.get(b) ? -1 : 1;
+      sourceIndexes.sort((a, b) => {
+        return sums[a] > sums[b] ? -1 : 1;
       });
     }
-    console.log(JSON.stringify(info, undefined, "  "));
+    // console.log(JSON.stringify(info, undefined, "  "));
 
-    ok(info.length);
-    const matched = match(box, info);
+    const matched = match(box, [
+        ...sources,
+        ...targets
+    ]);
 
-    console.log({ matched, box });
+    // console.log({ matched, box });
     ok(matched.size);
-    const remaining = [...info.keys()];
+    const remaining = [...targets.keys()];
     for (const [value, matches] of matched) {
       if (!matches.length) continue;
-      const indexes = matches.map((match) => info.indexOf(match));
-      const source = info.indexOf(value);
+      const indexes = matches
+          .map((match) => targets.indexOf(match))
+          .filter(value => value > -1);
+      const source = sources.indexOf(value);
       for (const index of indexes) {
         const remainingIndex = remaining.indexOf(index);
         if (remainingIndex === -1) continue;
@@ -86,33 +97,49 @@ export function space<T = unknown>(options: SpaceOptions): Space<T> {
     return blended;
   }
 
-  function getIndex(at: Directional) {
+  function getIndex(indexed: Directional[], at: Directional) {
     const expected = indexed.findIndex((index) =>
-      isSamePoint(at.point, index.point)
+      isSameDirectional(at, index)
     );
     if (expected > -1) return expected;
     const index = indexed.length;
     indexed.push(at);
     return index;
   }
+  function blendInner(blended = matchingBlend()) {
+    return blended.map(
+        ({ source, target }) => ({
+          source: sources[source],
+          target: targets[target]
+        })
+    )
+  }
 
   return {
+    blend() {
+      return blendInner();
+    },
     source(source, at) {
-      const index = getIndex(at);
+      const index = getIndex(sources, at);
       blender.source(source, index);
       return at;
     },
     target(target, at) {
-      const index = getIndex(at);
+      const index = getIndex(targets, at);
       blender.target(target, index);
       return at;
     },
     connect(options?: SpaceConnectOptions) {
       const blended = matchingBlend();
-      return blender.connect({
+      const output = blendInner(blended);
+      const promises = blender.connect({
         ...options,
         blended,
       });
+      return output.map((output, index) => ({
+        ...output,
+        promise: promises[index].promise
+      }))
     },
   };
 }

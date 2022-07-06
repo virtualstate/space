@@ -45,6 +45,7 @@ export function isPoint3D(value: unknown): value is Point3D {
 }
 
 export function isSamePoint(a: Point, b: Point) {
+  if (!a && !b) return true;
   if (a === b) return true;
   if (a.dimensions.length !== b.dimensions.length) return false;
   return a.dimensions.every((value, index) => b[index] === index);
@@ -75,7 +76,11 @@ export function getWithinRadius({
     dimensions: point.dimensions.map(() => diameter),
   };
 
+  // console.log(JSON.stringify({ box }, undefined, "  "));
+
   const withinBox = points.filter((point) => isInsideBox(point, box));
+
+  // console.log(JSON.stringify({ withinBox }, undefined, "  "));
 
   if (!withinBox.length) {
     return [];
@@ -94,18 +99,17 @@ export function isPointZero(point: Point) {
 
 export function addPoints(point: Point, ...points: Point[]) {
   const filtered = points.filter(Boolean);
+  const dimensions = filtered.reduce(
+      (dimensions, point) => Math.max(dimensions, point.dimensions.length),
+      0
+  );
+  // ok(dimensions);
   if (!point) {
-    const dimensions = filtered.reduce(
-      (max, { dimensions }) => Math.max(max, dimensions.length),
-      11
-    );
     return addPoints({
       type: "Point",
       dimensions: Array.from({ length: dimensions }, () => 0),
-    });
+    }, ...points);
   }
-  const dimensions = point.dimensions.length;
-  ok(dimensions);
   return filtered.reduce((sum, next) => {
     ok(
       isPoint(sum, {
@@ -114,7 +118,10 @@ export function addPoints(point: Point, ...points: Point[]) {
     );
     return {
       ...sum,
-      dimensions: sum.dimensions.map((a, index) => a + next.dimensions[index]),
+      dimensions: [
+          ...sum.dimensions,
+          ...Array.from({ length: dimensions - sum.dimensions.length }, () => 0)
+      ].map((a, index) => a + next.dimensions[index]),
     };
   }, point);
 }
@@ -145,5 +152,6 @@ export function projectPoint(
 }
 
 export function pointDimensionsSum(point: Point) {
-  return point.dimensions.reduce((sum, value) => sum + value, 0);
+  // console.log(point.dimensions);
+  return point.dimensions.reduce((sum, value) => sum + Math.abs(value), 0);
 }

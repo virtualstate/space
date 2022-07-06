@@ -1450,10 +1450,10 @@
   resolved "https://registry.yarnpkg.com/@virtualstate/focus/-/focus-1.0.1-alpha.109.tgz#2206e7eecd8f61532ade5290e79b609a4ec3281b"
   integrity sha512-mDy8vepLCuSowMn0IhsGqZPcXw3u6Uaa8+uFb8jUzaHM2S16Fod9wZRufGSvczYWv5mM0yyYaqRDi0dN0UUEMw==
 
-"@virtualstate/promise@^1.1.5-alpha.69":
-  version "1.1.5-alpha.69"
-  resolved "https://registry.yarnpkg.com/@virtualstate/promise/-/promise-1.1.5-alpha.69.tgz#976918351720e8916a0585f0e2fe914c4ac3666a"
-  integrity sha512-N8H64ItQQV6/ns7kAEzDFfHgvf/QK2hDTnK81n9KruSrJDolhZKV7OTBJwRXqBHLw96uVlSvrQhnl1SJWptieA==
+"@virtualstate/promise@^1.1.5-alpha.72":
+  version "1.1.5-alpha.72"
+  resolved "https://registry.yarnpkg.com/@virtualstate/promise/-/promise-1.1.5-alpha.72.tgz#3eead8cee2c838c3d34fe09983ed0b7239461397"
+  integrity sha512-LKwHpdx4F0KShnjfntuIs1m8MRC3n7VgPjego4T+IL2ljjclGY3hEwwU2A3DcxohOMI/3f6SYHMviWzOkNWE3A==
 
 "@virtualstate/union@^2.48.1":
   version "2.48.1"
