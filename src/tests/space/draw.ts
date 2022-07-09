@@ -27,11 +27,11 @@ blender.source(
     {
         point: {
             type: "Point",
-            dimensions: [100, 100, 100],
+            dimensions: [100, 50, 50],
         },
         direction: {
             type: "Point",
-            dimensions: [-25, -25, -25],
+            dimensions: [-25, 0, 0],
         },
     }
 );

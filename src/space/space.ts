@@ -31,11 +31,12 @@ export interface BlendedSpace extends BlendedSpaceIndex {
 }
 
 export interface Space<T = unknown>
-  extends Blender<T, BlendedSpaceIndex, BlendedSpace> {
+  extends Blender<T, BlendedSpaceIndex, BlendedSpace>, Box {
   blend(): BlendedSpaceIndex[];
   source(source: AsyncIterable<T>, at: Directional): Directional;
   target(target: BlenderTarget<T>, at: Directional): Directional;
   connect(options?: SpaceConnectOptions): BlendedSpace[];
+
 }
 
 export interface SpaceOptions {
@@ -111,6 +112,7 @@ export function space<T = unknown>(options: SpaceOptions): Space<T> {
   }
 
   return {
+    ...box,
     blend() {
       return blendInner();
     },

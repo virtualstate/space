@@ -5,12 +5,15 @@ import {
     WebGLRenderer,
     LineBasicMaterial,
     Mesh,
-    BoxGeometry, PointLight, DoubleSide, MeshPhongMaterial
+    BoxGeometry,
+    PointLight,
+    DoubleSide,
+    MeshPhongMaterial,
+    EdgesGeometry, Group, LineSegments, Vector3, BufferGeometry, Line, MeshBasicMaterial
 } from "three";
 import * as GLModule from "gl";
-import {TextGeometry} from "three/examples/jsm/geometries/TextGeometry.js";
-import {FontLoader} from "three/examples/jsm/loaders/FontLoader.js";
-import OptimerBold from "three/examples/fonts/optimer_bold.typeface.json" assert { type: "json" };
+import {ParametricGeometries} from "three/examples/jsm/geometries/ParametricGeometries.js";
+import SphereGeometry = ParametricGeometries.SphereGeometry;
 
 const { default: gl } = GLModule;
 
@@ -73,48 +76,79 @@ function createContext(width: number, height: number) {
 }
 
 export function draw(space: Space, blended: BlendedSpaceIndex[]) {
-    const width = 500,
-        height = 500;
+    const width = 1024,
+        height = 1024;
     const info = createContext(width, height);
-    const { material, meshMaterial, render, scene} = info;
+    const { material, meshMaterial, render, scene, camera} = info;
 
-    const fontLoader = new FontLoader();
 
-    const font = fontLoader.parse(OptimerBold);
+    const [
+        boxWidth,
+        boxHeight,
+        boxDepth
+    ] = space.dimensions
 
     // const geometry = new BufferGeometry().setFromPoints( points );
     // const line = new Line(geometry, material);
 
     // scene.add(line)
 
-    const text = new TextGeometry("Hello world", {
-        font: font,
-        size: 10,
-        height: 2,
-        curveSegments: 2,
-        // bevelEnabled: true,
-        // bevelThickness: 10,
-        // bevelSize: 8,
-        // bevelOffset: 0,
-        // bevelSegments: 5
-    })
+    camera.position.set(boxWidth / 2, boxHeight / 2, boxDepth * 4);
 
-    const textMesh = new Mesh(text, material);
+    const group = new Group();
 
-    const box = new BoxGeometry(10, 10, 10);
-    const cube = new Mesh( box, meshMaterial );
-    cube.rotation.x = 0.55;
-    cube.rotation.y = 0.25;
-    scene.add(cube);
-    //
-    textMesh.position.x = -30
-    // textMesh.position.y = 40;
-    textMesh.position.z = 10;
-    //
-    textMesh.rotation.x = 3;
-    textMesh.rotation.y = 0;
+    console.log({ boxWidth, boxHeight, boxDepth });
+    const whiteLine = new LineBasicMaterial({
+        color: 0xffffff
+    });
 
-    scene.add(textMesh);
+    for (const { source, target } of blended) {
+
+        const sphereGeometry = new SphereGeometry(5, 5, 5);
+        const redMesh = new MeshBasicMaterial({ color: 0xff0000 });
+        const sphere = new Mesh(sphereGeometry, redMesh);
+
+        sphere.position.set(
+            source.point.dimensions[0],
+            source.point.dimensions[1],
+            source.point.dimensions[2]
+        );
+
+        group.add(sphere);
+
+        const points = [
+            new Vector3(
+                source.point.dimensions[0],
+                source.point.dimensions[1],
+                source.point.dimensions[2]
+            ),
+            new Vector3(
+                target.point.dimensions[0],
+                target.point.dimensions[1],
+                target.point.dimensions[2]
+            ),
+        ];
+
+        const lineGeometry = new BufferGeometry().setFromPoints(points);
+
+        const line = new Line(lineGeometry, whiteLine);
+        line.position.set(0, 0, 0);
+
+        group.add(line);
+    }
+
+    const box = new BoxGeometry(boxWidth, boxHeight, boxDepth);
+    const edges = new EdgesGeometry(box);
+    const cube = new LineSegments(edges, whiteLine);
+    cube.position.set(boxWidth / 2, boxHeight / 2, boxDepth / 2);
+
+    group.add(cube);
+
+    group.position.set(0, 0, 0);
+    group.rotation.x = -0.35;
+    group.rotation.y = -0.35;
+    scene.add(group);
+
 
     render();
 
