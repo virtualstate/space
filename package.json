@@ -35,7 +35,10 @@
   "homepage": "https://github.com/virtualstate/space#readme",
   "author": "Fabian Cook <hello@fabiancook.dev>",
   "license": "MIT",
-  "dependencies": {},
+  "dependencies": {
+    "ndarray": "^1.0.19",
+    "pngjs": "^6.0.0"
+  },
   "devDependencies": {
     "@babel/cli": "^7.15.4",
     "@babel/core": "^7.15.4",
@@ -48,6 +51,7 @@
     "@types/mkdirp": "^1.0.2",
     "@types/node": "^17.0.1",
     "@types/rimraf": "^3.0.2",
+    "@types/three": "^0.141.0",
     "@types/uuid": "^8.3.3",
     "@types/whatwg-url": "^8.2.1",
     "@virtualstate/combinational": "^1.0.1-alpha.2",
@@ -60,6 +64,8 @@
     "core-js": "^3.17.2",
     "dom-lite": "^20.2.0",
     "filehound": "^1.17.4",
+    "get-pixels": "^3.3.3",
+    "gl": "^5.0.3",
     "jest": "^27.1.0",
     "jest-playwright-preset": "^1.7.0",
     "mkdirp": "^1.0.4",
@@ -68,6 +74,8 @@
     "rollup": "^2.61.1",
     "rollup-plugin-babel": "^4.4.0",
     "rollup-plugin-ignore": "^1.0.10",
+    "save-pixels": "^2.3.6",
+    "three": "^0.142.0",
     "ts-jest": "^27.0.5",
     "ts-node": "^10.2.1",
     "typescript": "^4.7.4",

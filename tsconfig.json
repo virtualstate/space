@@ -15,6 +15,7 @@
     "jsx": "react",
     "jsxFactory": "h",
     "jsxFragmentFactory": "createFragment",
+    "resolveJsonModule": true,
     "allowJs": true,
     "paths": {
 
